@@ -5,6 +5,7 @@ PATH = "C:\Program Files (x86)\chromedriver.exe"
 driver = webdriver.Chrome(PATH)
 
 with open('names.csv', 'w', newline='') as csvfile:
+    
     thewriter = csv.writer(csvfile)
     thewriter.writerow(['Occupation', 'First Name', 'Last Name'])
     # Open the site url
@@ -20,32 +21,20 @@ with open('names.csv', 'w', newline='') as csvfile:
     # Finding the contacts associated with the school
     school_contacts = driver.find_elements_by_xpath("/html/body/p[13]/table/tbody/tr")
 
-    for contact in school_contacts:
-        contact_fields = contact.find_elements_by_tag_name('td')
-        # Itterating through the listed fields ex. "First Name" ect.    
-        contact_info = []
+    school_leaders_list = []
 
-        for field in contact_fields:
-            print(field.text)
-            contact_info.append(field.text)
+    for index, contact in enumerate(school_contacts):     
+        fields = contact.find_elements_by_tag_name('td')
+        if index == 0:
+            continue
+        for field_index, field in enumerate(fields):
+            if field_index == 0:
+                school_leaders_list.append(field.find_element_by_tag_name('a').get_attribute("href"))
+                print(field.find_element_by_tag_name('a').get_attribute("href"))
+                thewriter.writerow([field.find_element_by_tag_name('a').get_attribute("href")])
+            continue
 
-        if len(contact_info) > 0:
-            # writer.writerow({'position': contact_info[0], 'first_name': contact_info[1], 'last_name': contact_info[2]})
-            print("Congrats here yyuo go")
-            thewriter.writerow([contact_info[0], contact_info[2], contact_info[4]])
-        else:
-            print("Sorry there is no data here")
-driver.close()
+    print(school_leaders_list)
+    print(len(school_leaders_list))
 
-
-
-
-
-
-
-
-
-
-
-
-
+            # print(driver.current_url)
